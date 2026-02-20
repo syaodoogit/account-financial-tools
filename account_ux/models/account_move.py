@@ -188,6 +188,15 @@ class AccountMove(models.Model):
 
     def _replace_inactive_tax_amounts(self, move, _tax_lines, inactive_trl_ids):
         tax_totals = move.tax_totals
+
+        # ✅ Odoo puede devolver False (bool) cuando no hay tax_totals armados
+        if not tax_totals or not isinstance(tax_totals, dict):
+            return tax_totals
+
+        # ✅ puede no haber subtotals según tipo de move
+        if not tax_totals.get("subtotals"):
+            return tax_totals
+
         subtotal = tax_totals["subtotals"][0]
         tax_groups = subtotal["tax_groups"]
 
